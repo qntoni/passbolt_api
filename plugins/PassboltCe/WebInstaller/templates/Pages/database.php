@@ -37,7 +37,7 @@ $this->Html->script('web_installer/database', ['block' => 'scriptBottom']);
                                 <div class="input text singleline connection_info">
                                     <?= $this->Form->control('type', [
                                         'type' => 'select',
-                                        'options' => ['mysql' => 'mysql://'],
+                                        'options' => ['mysql' => 'mysql://', 'pgsql' => 'postgres://'],
                                         'default' => 'mysql',
                                         'templates' => [
                                             'inputContainer' => '<div class="input text protocol">{{content}}</div>',

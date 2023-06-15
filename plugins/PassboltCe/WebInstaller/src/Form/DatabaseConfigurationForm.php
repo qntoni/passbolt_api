@@ -37,6 +37,7 @@ class DatabaseConfigurationForm extends Form
     protected function _buildSchema(Schema $schema): \Cake\Form\Schema
     {
         return $schema
+            ->addField('type', ['type' => 'string', 'default' => 'mysql']) 
             ->addField('host', 'string')
             ->addField('port', ['type' => 'string'])
             ->addField('username', ['type' => 'string'])
@@ -80,6 +81,13 @@ class DatabaseConfigurationForm extends Form
                 'message' => __('The password should not contain quotes.'),
             ])
             ->utf8('password', __('The password should be a valid BMP-UTF8 string.'));
+
+        $validator
+        ->requirePresence('type', 'create', __('A database type is required.'))
+        ->notEmptyString('type', __('The database type should not be empty.'))
+        ->utf8('type', __('The database type should be a valid BMP-UTF8 string.'))
+        ->inList('type', ['mysql', 'pgsql'], __('Invalid database type.'));
+
 
         $validator
             ->requirePresence('database', 'create', __('A database name is required.'))

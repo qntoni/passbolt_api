@@ -20,6 +20,7 @@ use App\Utility\Healthchecks;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\ORM\TableRegistry;
@@ -36,9 +37,9 @@ class DatabaseConfiguration
     {
         return [
             'className' => 'Cake\Database\Connection',
-            // For the moment, we take MySQL per default.
-            // Later we will offer the possibility to choose between MySQL and Postgres in the form
-            'driver' => $data['driver'] ?? env('DATASOURCES_DEFAULT_DRIVER', Mysql::class),
+            // The database driver is determined by the 'type' field in the form data.
+            // The 'type' field allows for the choice between MySQL and Postgres.
+            'driver' => $data['driver'] ?? self::getDatabaseDriver($data['dbType'] ?? env('DB_TYPE', 'mysql')),
             'persistent' => false,
             'host' => $data['host'],
             'port' => $data['port'],
@@ -49,6 +50,25 @@ class DatabaseConfiguration
             'timezone' => 'UTC',
         ];
     }
+
+    /**
+     * Get the appropriate database driver based on the database type
+     *
+     * @param string $dbType the database type ("mysql" or "postgres")
+     * @return string the fully qualified name of the driver class
+     */
+    public static function getDatabaseDriver(string $dbType): string
+    {
+        switch ($dbType) {
+            case 'mysql':
+                return Mysql::class;
+            case 'postgres':
+                return Postgres::class;
+            default:
+                throw new \InvalidArgumentException("Invalid database type: $dbType");
+        }
+    }
+
 
     /**
      * Set the default database config
